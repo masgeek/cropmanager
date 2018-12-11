@@ -1,51 +1,51 @@
-#SHORT DEF:   Wrapper function to calculate recommendations across all use cases.
-#RETURNS:     Vector of with recommendation texts to display.
-#DESCRIPTION: Function with all inputs required by the DST app, and calling use case-specific wrapper functions to calculated recommendations on IC, FR, PP and SP.
-#             This function also calls on functions to send recommendation reports by SMS and/or email.
-#INPUT:
-#country    : 2-letter country code
-#lat        : Latitude in decimal degrees
-#lon        : Longitude in decimal degrees
-#area       : Numerical value for area of the field
-#areaUnits  : Units for area (acre, ha or m2)
-#IC         : Logical, indicating if an intercrop (TRUE) or a monocrop (FALSE) is grown
-#intercrop  : Intercrop species grown, either maize or sweetpotato, or NA if monocrop
-#FR         : Logical, indicating if fertilizer recommendations are requested, NA if IC == TRUE and country == "TZ"
-#PP         : Logical, indicating if planting practice recommendations are requested, NA if IC == TRUE or country == "TZ"
-#SPP        : Logical, indicating if scheduled planting - advice on planting date is requested, NA if IC == TRUE
-#SPH        : Logical, indicating if scheduled planting - advice on harvest date is requested, NA if IC == TRUE
-#PD         : Planting date, in format "yyyy-mm-dd" (%Y-%m-%d)
-#HD         : Harvest data, in format "yyyy-mm-dd" (%Y-%m-%d)
-#tractor    : Logical, indicating if the user has access to a tractor, NA if PP != TRUE
-#implement  : vector containing implements available for tractor (plough, harrow, ridger)
-#herbicide  : Logical, indicating if the user has access to herbicides for weed control
-#nTill1     : Number of primary tillage operations conducted in current practice (NA, 0, 1, 2), NA if PP != TRUE
-#nHarrow    : Number of harrow operations conducted in current practice (NA, 0, 1, 2), NA if PP != TRUE
-#ridges     : Logical indicating if the farmer ridges his/her field in current practice (NA, TRUE, FALSE), NA if PP != TRUE
-#weedMethod : Vector containing methods used for weed control (NA, manual, herbicide), NA if PP!= TRUE
-#costLMO    : Dataframe containing cost of land management operations; costs are provided in local currency, for the area of the field
-#costWCO    : Dataframe containing cost of weed management operations; costs are provided in local currency, for the area of the field
-#FCY        : Farmer-reported current yield, in tonnes FM per ha (optional, default value = NA)
-#CMP        : Current maize performance, score on a scale of 1 (very yellow and stunted) .. 5 (tall and dark green), NA if IC != TRUE and FR != TRUE, or NA if the user does not know (NA = default)
-#fertilizers: Dataframe containing available fertilizers and their cost per bag (in local currency) and bag weight (in kg)
-#saleSF     : Logical, indicating if the user is selling roots to a registered starch factory at factory-fixed prices
-#nameSF     : Name of starch factory where roots will be sold, NA if saleSF = FALSE
-#cassPD     : Type of cassava produce sold (roots, chips, flour, gari)
-#cassUW     : Unit weight at which cassava produce is sold, in kg; common measures are 1 (per kg), 50 (per 50kg bag), 100 (per 100kg bag) and 1000 (per tonne); can be NA if user does not know.
-#cassUP     : Price of 1 cassava produce unit in local currency; can be NA if user does not know.
-#maizePD    : Type of maize produce sold (fresh cobs, dry cobs, grain), NA if IC != TRUE and country == "NG"
-#maizePC    : Logical indicating if maize is sold per cob (NA, TRUE, FALSE), NA if maizePD != "fresh_cob"
-#maizeUW    : Unit weight at which maize produce is sold, in kg; common measures are 1 (per kg), 50 (per 50kg bag), 100 (per 100kg bag), NA if IC != TRUE and country == "NG" or NA if maizePD == "grain"; can be NA if user does not know.
-#maizeUP    : Price of 1 maize produce unit (or cob, if maizePC == TRUE) in local currency, NA if IC != TRUE and country == "NG"; can be NA if user does not know.
-#maxInv     : Maximal investment in fertilizer, for the area of the field in local currency, NA if FR != TRUE, default = NA (if user does not wish to set an investment ceiling)
-#SMS        : Logical indicating if recommendations must be sent by SMS to the user
-#email      : Logical indicating if recommendations must be sent by email to the user
-#userPhoneCC: Country code of the phone number of the user requesting the recommendations (to send recommendations by SMS), default = NA (if user does not wish to receive recommendations by SMS); example 234 for Nigeria
-#userPhoneNr: Phone number of the user requesting the recommendations, without the initial zero (to send recommendations by SMS), default = NA (if user does not wish to receive recommendations by SMS); excludes the initial zero, stored as numerical (e.g., 789123456)
-#userName   : Name of the user requesting the recommendations (to be included in the email report), default = NA (if user does not wish to receive recommendations by email)
-#userEmail  : Email address of the user requesting the recommendations (to be included in the email report), default = NA (if user does not wish to receive recommendations by email)
-#userField  : Name or desciption of the field (to be included in the email report, and aid the user to recall for which field recommendations were requested), default = NA (if user does not wish to receive recommendations by email)
-
+#' SHORT DEF:   Wrapper function to calculate recommendations across all use cases.
+#' RETURNS:     Vector of with recommendation texts to display.
+#' DESCRIPTION: Function with all inputs required by the DST app, and calling use case-specific wrapper functions to calculated recommendations on IC, FR, PP and SP.
+#'             This function also calls on functions to send recommendation reports by SMS and/or email.
+#' INPUT:
+#' @param country    : 2-letter country code
+#' @param lat        : Latitude in decimal degrees
+#' @param lon        : Longitude in decimal degrees
+#' @param area       : Numerical value for area of the field
+#' @param areaUnits  : Units for area (acre, ha or m2)
+#' @param IC         : Logical, indicating if an intercrop (TRUE) or a monocrop (FALSE) is grown
+#' @param intercrop  : Intercrop species grown, either maize or sweetpotato, or NA if monocrop
+#' @param FR         : Logical, indicating if fertilizer recommendations are requested, NA if IC == TRUE and country == "TZ"
+#' @param PP         : Logical, indicating if planting practice recommendations are requested, NA if IC == TRUE or country == "TZ"
+#' @param SPP        : Logical, indicating if scheduled planting - advice on planting date is requested, NA if IC == TRUE
+#' @param SPH        : Logical, indicating if scheduled planting - advice on harvest date is requested, NA if IC == TRUE
+#' @param PD         : Planting date, in format "yyyy-mm-dd" (%Y-%m-%d)
+#' @param HD         : Harvest data, in format "yyyy-mm-dd" (%Y-%m-%d)
+#' @param tractor    : Logical, indicating if the user has access to a tractor, NA if PP != TRUE
+#' @param implement  : vector containing implements available for tractor (plough, harrow, ridger)
+#' @param herbicide  : Logical, indicating if the user has access to herbicides for weed control
+#' @param nTill1     : Number of primary tillage operations conducted in current practice (NA, 0, 1, 2), NA if PP != TRUE
+#' @param nHarrow    : Number of harrow operations conducted in current practice (NA, 0, 1, 2), NA if PP != TRUE
+#' @param ridges     : Logical indicating if the farmer ridges his/her field in current practice (NA, TRUE, FALSE), NA if PP != TRUE
+#' @param weedMethod : Vector containing methods used for weed control (NA, manual, herbicide), NA if PP!= TRUE
+#' @param costLMO    : Dataframe containing cost of land management operations; costs are provided in local currency, for the area of the field
+#' @param costWCO    : Dataframe containing cost of weed management operations; costs are provided in local currency, for the area of the field
+#' @param FCY        : Farmer-reported current yield, in tonnes FM per ha (optional, default value = NA)
+#' @param CMP        : Current maize performance, score on a scale of 1 (very yellow and stunted) .. 5 (tall and dark green), NA if IC != TRUE and FR != TRUE, or NA if the user does not know (NA = default)
+#' @param fertilizers: Dataframe containing available fertilizers and their cost per bag (in local currency) and bag weight (in kg)
+#' @param saleSF     : Logical, indicating if the user is selling roots to a registered starch factory at factory-fixed prices
+#' @param nameSF     : Name of starch factory where roots will be sold, NA if saleSF = FALSE
+#' @param cassPD     : Type of cassava produce sold (roots, chips, flour, gari)
+#' @param cassUW     : Unit weight at which cassava produce is sold, in kg; common measures are 1 (per kg), 50 (per 50kg bag), 100 (per 100kg bag) and 1000 (per tonne); can be NA if user does not know.
+#' @param cassUP     : Price of 1 cassava produce unit in local currency; can be NA if user does not know.
+#' @param maizePD    : Type of maize produce sold (fresh cobs, dry cobs, grain), NA if IC != TRUE and country == "NG"
+#' @param maizePC    : Logical indicating if maize is sold per cob (NA, TRUE, FALSE), NA if maizePD != "fresh_cob"
+#' @param maizeUW    : Unit weight at which maize produce is sold, in kg; common measures are 1 (per kg), 50 (per 50kg bag), 100 (per 100kg bag), NA if IC != TRUE and country == "NG" or NA if maizePD == "grain"; can be NA if user does not know.
+#' @param maizeUP    : Price of 1 maize produce unit (or cob, if maizePC == TRUE) in local currency, NA if IC != TRUE and country == "NG"; can be NA if user does not know.
+#' @param maxInv     : Maximal investment in fertilizer, for the area of the field in local currency, NA if FR != TRUE, default = NA (if user does not wish to set an investment ceiling)
+#' @param SMS        : Logical indicating if recommendations must be sent by SMS to the user
+#' @param email      : Logical indicating if recommendations must be sent by email to the user
+#' @param userPhoneCC: Country code of the phone number of the user requesting the recommendations (to send recommendations by SMS), default = NA (if user does not wish to receive recommendations by SMS); example 234 for Nigeria
+#' @param userPhoneNr: Phone number of the user requesting the recommendations, without the initial zero (to send recommendations by SMS), default = NA (if user does not wish to receive recommendations by SMS); excludes the initial zero, stored as numerical (e.g., 789123456)
+#' @param userName   : Name of the user requesting the recommendations (to be included in the email report), default = NA (if user does not wish to receive recommendations by email)
+#' @param userEmail  : Email address of the user requesting the recommendations (to be included in the email report), default = NA (if user does not wish to receive recommendations by email)
+#' @param userField  : Name or desciption of the field (to be included in the email report, and aid the user to recall for which field recommendations were requested), default = NA (if user does not wish to receive recommendations by email)
+#' @export
 cassavaCropManager <- function(country = c("NG", "TZ"), #select one
                                lat,
                                lon,
@@ -139,7 +139,7 @@ cassavaCropManager <- function(country = c("NG", "TZ"), #select one
 #INPUT:       text: Vector of body text to be sent by SMS. Elements should not exceed 1600 character limit!
 #             src: source phone number, starting with country code, default 254727876796
 #             dst: destination phone number, starting with country code, e.g., 234789123456
-
+#' @export
 sendSMSReport <- function(SMStext, src="254727876796", dst){
 	if(is.list(res)){
 	#plivio account details
@@ -183,6 +183,7 @@ sendSMSReport <- function(SMStext, src="254727876796", dst){
 #}
 
 #' function to send mail from acai.akilimo@gmail.com
+#' @export
 sendEmailReport <- function(res=res, userName, userEmail, userField){
 	if(is.list(res)){
 		##knit("fertilizer_advice.Rmd")
@@ -207,7 +208,8 @@ sendEmailReport <- function(res=res, userName, userEmail, userField){
 
 }
 
-#'function to put data used in the markdown .rmd
+#' function to put data used in the markdown .rmd
+#' @export
 fertilizerAdviseTable <- function(){
 	acairm <- read.csv("MarkDownTextD.csv")
 	dat <- subset(acairm, select=c(fertilizer1, bags1, total_cost1,kgs1, currency, field_area))
@@ -480,6 +482,7 @@ fertilizerAdviseTable <- function(){
 #'  @param lon
 #'  @param areaUnits  : Units for area (acre, ha or m2)
 #'  @param area       : Numerical value for area of the field
+#'  @export
 # PD = "2018-03-01"; HD = "2019-05-31"; lat = 10.024; lon = 4.025; country = "NG"; cassUW = 1000; cassUP = 50760; maxInv = 72000;
 # urea=TRUE; ureaCostperBag=NULL; MOP=TRUE; MOPBagWt=NULL; MOPCostperBag=NULL; NPK201010=TRUE;NG_CY_Fertdata = NG_CY_FertRecom ;
 # NPK201010BagWt=NULL; NPK201010CostperBag=NULL; NPK151515=TRUE; NPK151515BagWt=NULL; NPK151515CostperBag=NULL; area=2; areaUnits="acre";

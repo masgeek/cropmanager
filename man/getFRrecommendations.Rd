@@ -12,7 +12,8 @@
  @param lat
  @param lon
  @param areaUnits  : Units for area (acre, ha or m2)
- @param area       : Numerical value for area of the field}
+ @param area       : Numerical value for area of the field
+ @export}
 \usage{
 getFRrecommendations(lat, lon, PD, HD, country, cassUW, cassUP, maxInv,
   fertilizers, NG_CY_Fertdata, SoilData, area, areaUnits, userName,
@@ -31,4 +32,5 @@ getFRrecommendations(lat, lon, PD, HD, country, cassUW, cassUP, maxInv,
  @param lon
  @param areaUnits  : Units for area (acre, ha or m2)
  @param area       : Numerical value for area of the field
+ @export
 }
