@@ -1,0 +1,329 @@
+---
+title: "Focal Chart (Top)"
+Title: "Cassava Fertilizer Advice"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+---
+  <style>
+
+body {
+  padding-top:0px
+}
+
+.navbar{
+  visibility: hidden
+}
+}
+
+</style> 
+
+ Row {data-height=60}
+-------------------------------------  
+
+<img fig.align="center">
+
+```{r, out.width = "500px"}
+fertilizerAdviseTable()
+#source("fertilizer advise table.R")
+knitr::include_graphics("alogo.png")
+```
+
+ Row {data-height=160}
+-------------------------------------  
+### What you told us
+
+```{r include=FALSE}
+
+#library(kableExtra)
+
+knitr::opts_chunk$set(echo = TRUE)
+options(knitr.kable.NA = '')
+
+personalized_info <- read.csv("MarkDownTextD.csv", stringsAsFactors = FALSE)
+
+ if (file.exists("datall1.csv")) {
+  da1<-read.csv("datall1.csv", stringsAsFactors = FALSE)
+  costt <- formatC(signif(da1$total_cost1, digits=3), format="f", big.mark=",", digits=0)
+  da1title1 <-  paste("Urea application:  ", da1$kgs1, " kg for ", da1$field_area, " (~",  da1$bags1," bags of 50 kg)", " = ",
+                    costt, da1$currency, sep=" ")
+  da1bag <-da1[,c("rep1")]
+ 
+}else{
+  da1 <- NULL
+}
+
+if (file.exists("datall2.csv")){
+  da2 <-read.csv("datall2.csv", stringsAsFactors = FALSE)
+  cost2 <- formatC(signif(da2$total_cost2, digits=3), format="f", big.mark=",", digits=0)
+  da2title1 <- paste( "NPK 15:15:15; ", da2$kgs2, " kg for ", da2$field_area, " (~",  da2$bags2," bags of 50 kg)", " = ",
+                      cost2, da2$currency, sep=" ")
+  da2bag <-da2[,c("rep2")]
+} else{
+  da2 <- NULL
+}
+if (file.exists("datall3.csv")){
+  da3<-read.csv("datall3.csv", stringsAsFactors = FALSE)
+  cost3 <- formatC(signif(da3$total_cost3, digits=3), format="f", big.mark=",", digits=0)
+ da3title1 <- paste("NPK 20:10:10; ", da3$kgs3, " kg for ", da3$field_area, " (~",  da3$bags3," bags of 50 kg)", " = ",
+                    cost3,   da3$currency, sep=" ")
+  da3bag <-da3[,c("rep3")]
+}else{
+  da3 <- NULL
+}
+if (file.exists("datall4.csv")) {
+  da4<-read.csv("datall4.csv", stringsAsFactors = FALSE)
+  cost4 <- formatC(signif(da4$total_cost4, digits=3), format="f", big.mark=",", digits=0)
+  da4title1 <- paste("MOP application: ", da4$kgs4, " kg for ", da4$field_area, " (~",  da4$bags4," bags of 50 kg)"," = ",
+                    cost4,   da4$currency, sep=" ")
+  da4bag <-da4[,c("rep4")]
+}else{
+  da4 <- NULL
+}
+  
+totalRevenuemoney <-read.csv("totalRevenuemoney.csv")
+totalSalemoney <-read.csv("totalSalemoney.csv")
+totalCostmoney <-read.csv("totalCostmoney.csv")
+
+
+
+# for (i in 1:nrow(personalized_info)){
+# # 
+ name <- personalized_info$name
+   phone <- as.character(personalized_info$phone)
+   field <- personalized_info$field
+  field_area <- personalized_info$field_area
+   plant_date <- personalized_info$plant_date
+   hvst_date <- personalized_info$hvst_date
+   current_yield<- personalized_info$current_yield
+
+```   
+  **Your name:** `r name`,
+
+  **Phone:** `r phone`
+ 
+  **Your field:** `r field`
+  
+  **Field area:** `r field_area`
+  
+  **Planting date:** `r plant_date`
+
+  **Harvest date:** `r hvst_date`
+  
+  **Your current yield:** `r current_yield`  
+  
+ 
+### Available fertilizers
+
+```{r setup, include=FALSE}
+
+personalized_info <- read.csv("MarkDownTextD.csv", stringsAsFactors = FALSE)
+
+# personalized_info <- read.csv("MarkDownTextD.csv", stringsAsFactors = FALSE)
+dds <- data.frame(fertname = as.character(personalized_info$fertilizer1), cost=c(personalized_info$cost1),
+                  units = as.character(personalized_info$unit1), currency=as.character(personalized_info$currency))
+dds <- rbind(dds, data.frame(fertname = as.character(personalized_info$fertilizer2), cost=c(personalized_info$cost2),
+                  units = as.character(personalized_info$unit2), currency=personalized_info$currency))
+dds <- rbind(dds, data.frame(fertname = as.character(personalized_info$fertilizer3), cost=c(personalized_info$cost3),
+                             units = as.character(personalized_info$unit3), currency=personalized_info$currency))
+dds <- rbind(dds, data.frame(fertname = as.character(personalized_info$fertilizer4), cost=c(personalized_info$cost4),
+                             units = as.character(personalized_info$unit4), currency=personalized_info$currency))
+dds <- droplevels(dds[!is.na(dds$cost), ])
+
+dds$cost2 <- formatC(signif(dds$cost, digits=3), format="f", big.mark=",", digits=0)
+
+intextText <- NULL
+for(k in 1:nrow(dds)){
+  dds2 <- data.frame(tbp = paste(" @", dds$cost2[k], " ", dds$currency[k], " per ", dds$units[k], sep=""))
+  intextText <- rbind(intextText, dds2 )
+}
+
+ureatext <- intextText[1,]
+npk151515text <- intextText[2,]
+npk201010text <- intextText[3,]
+MOPtext <- intextText[4,]
+
+costcassava <- formatC(signif(personalized_info$costcassava, digits=3), format="f", big.mark=",", digits=0)
+unitcassava <- personalized_info$unitcassava
+maxinvest <- formatC(signif(personalized_info$maxinvest, digits=3), format="f", big.mark=",", digits=0)
+area <- personalized_info$field_area
+cas_unit <- personalized_info$unit_field 
+currency <- personalized_info$currency
+
+
+```
+
+
+**Urea** `r ureatext`
+
+**NPK15:15:15** `r npk151515text`
+
+**NPK20:10:10** `r npk201010text`
+
+**MOP** `r MOPtext`
+
+<b>Cassava sold per`r unitcassava` @ `r costcassava` `r currency`</b>
+
+**Maximal investment:** <b>`r maxinvest` for `r area` </b>
+
+
+### Your farm location
+
+```{r echo=FALSE, message=FALSE, warning = FALSE}
+
+geodata <- read.csv("MarkDownTextD.csv", stringsAsFactors = FALSE)
+
+#geodata <- read.csv(file = "MarkDownTextD.csv", header = TRUE,  sep = "," )
+data <- subset(geodata[1,], select = c("name", "latitude", "longitude"))
+
+minLong=data$longitude - 0.05
+maxLong=data$longitude + 0.05
+minLat=data$latitude - 0.05
+maxLat=data$latitude + 0.05
+library(leaflet)
+library(mapview)
+my_map <- data %>%
+  #leaflet(width = "100%") %>%
+  #leaflet(options= leafletOptions(minZoom = 3, maxZoom = 10)) %>%
+  leaflet(options= leafletOptions(minZoom = 8, maxZoom = 10)) %>%
+  addProviderTiles(providers$Esri.WorldImagery)%>%
+  #setView(lng = -95.7129, lat = 37.0902, zoom = 4) %>%
+  
+  # addMarkers(~longitude, ~latitude
+  #          )%>% 
+  #addRectangles(lat1 = minLat, lng1 = minLong, lat2 = maxLat, lng2 = maxLong)%>% 
+  addCircleMarkers(~longitude, ~latitude, color="white", fillColor = "transparent", weight = 10, radius = 30)%>% 
+  
+  addScaleBar()
+#addTiles()
+mm <- "my_map.png"
+if (file.exists(mm)) file.remove(mm)
+
+mapshot(my_map, file="my_map.png")
+
+```
+![](my_map.png)
+
+Row {data-height=240}
+-------------------------------------------------------------
+
+### We recommend...
+<div style="margin-bottom:4px;">
+```{r message=FALSE, warning = FALSE, echo=FALSE}
+ options(knitr.table.format = 'markdown')
+
+ if(!is.null(da1)){
+   knitr::kable(da1title1, col.names = NULL, row.names = F) 
+ }
+
+```
+</div>
+
+
+<div style="margin-bottom:15px;">
+```{r message=FALSE, warning = FALSE, echo=FALSE}
+ options(knitr.table.format = 'markdown')
+
+ if(!is.null(da1)){
+   knitr::kable(da1bag, col.names = NULL, row.names = F) 
+ }
+
+```
+</div>
+
+
+<div style="margin-bottom:4px;">
+```{r message=FALSE, warning = FALSE, echo=FALSE}
+ options(knitr.table.format = 'markdown')
+
+ if(!is.null(da2)){
+   knitr::kable(da2title1, col.names = NULL, row.names = F) 
+ }
+
+
+```
+</div>
+
+<div style="margin-bottom:15px;">
+```{r message=FALSE, warning = FALSE, echo=FALSE}
+ options(knitr.table.format = 'markdown')
+
+ if(!is.null(da1)){
+   knitr::kable(da2bag, col.names = NULL, row.names = F) 
+ }
+
+```
+</div>
+
+<div style="margin-bottom:4px;">
+```{r message=FALSE, warning = FALSE, echo=FALSE}
+ options(knitr.table.format = 'markdown')
+
+ if(!is.null(da3)){
+   knitr::kable(da3title1, col.names = NULL, row.names = F) 
+ }
+
+```
+</div>
+
+<div style="margin-bottom:15px;">
+```{r message=FALSE, warning = FALSE, echo=FALSE}
+ options(knitr.table.format = 'markdown')
+
+ if(!is.null(da3)){
+   knitr::kable(da3bag, col.names = NULL, row.names = F) 
+ }
+
+```
+</div>
+
+
+<div style="margin-bottom:4px;">
+```{r message=FALSE, warning = FALSE, echo=FALSE}
+ options(knitr.table.format = 'markdown')
+
+ if(!is.null(da4)){
+   knitr::kable(da4title1, col.names = NULL, row.names = F) 
+ }
+
+```
+</div>
+
+<div style="margin-bottom:15px;">
+```{r message=FALSE, warning = FALSE, echo=FALSE}
+ options(knitr.table.format = 'markdown')
+
+ if(!is.null(da4)){
+   knitr::kable(da4bag, col.names = NULL, row.names = F) 
+ }
+
+```
+</div>
+
+
+### Expected gain in total production:
+```{r echo=FALSE}
+
+currency<- personalized_info$currency
+bags_total100<- (personalized_info$bags_total)*10
+bags_total <- personalized_info$bags_total
+product <- personalized_info$product
+unitcassava <- personalized_info$unitcassava
+final_cost<- personalized_info$totalSalePrice
+revenue <- personalized_info$revenue
+```
+
+
+**`r  bags_total` tonnes of cassava roots: ~** `r  bags_total100` bags of 100 kg `r product` 
+_________________________________________________________________________________________________
+
+**Total cost:** `r totalCostmoney`
+
+**Total calculated revenue:** `r totalSalemoney`
+_________________________________________________________________________________________________
+
+**Your expected net revenue:** `r totalRevenuemoney`
+
+
+
+
