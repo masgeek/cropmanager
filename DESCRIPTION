@@ -1,10 +1,10 @@
 Package: cropmanager
 Type: Package
 Title: Crop manager recommendation tool
-Version: 1.0.0
+Version: 1.1.0
 Author: Sammy Barasa, Melkit Chernet
 Maintainer: Sammy Barasa <barsamms@gmail.com>
-Description: Crop manager recommendation tool
+Description: Fertilizer recommendation tool
 License: GPL
 Encoding: UTF-8
 LazyData: true
